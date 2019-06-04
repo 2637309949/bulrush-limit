@@ -15,6 +15,7 @@ app.Use(&limit.Limit{
                 Rate:    2,
             },
         },
+        // Provides default redis storage, so time >=1s
         Model: &limit.RedisModel{
             Redis: addition.Redis,
         },
