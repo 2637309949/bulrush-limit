@@ -50,6 +50,7 @@ const defaultRate = 1
 
 // DefaultFailureHandler default error handler
 var DefaultFailureHandler ErrorHandler = func(ctx *gin.Context) {
+	rushLogger.Warn("Rate Limited access, Pease Check Again Later")
 	ctx.JSON(http.StatusBadRequest, gin.H{
 		"message": "Rate Limited access, Pease Check Again Later.",
 	})
