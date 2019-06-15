@@ -53,7 +53,10 @@ func matchRule(rules []Rule, params struct {
 		}
 		return methodMatch && ruleMatch
 	})
-	return rule != nil, rule.(Rule)
+	if rule == nil {
+		return false, Rule{}
+	}
+	return true, rule.(Rule)
 }
 
 func hashPath(ctx *gin.Context) string {
