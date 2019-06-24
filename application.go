@@ -17,12 +17,12 @@ type (
 	Rule struct {
 		Methods []string
 		Match   string
-		Rate    int16
+		Rate    int
 	}
 	// Model token store
 	Model interface {
-		Save(string, string, string, int16)
-		Find(string, string, string, int16) interface{}
+		Save(string, string, string, int)
+		Find(string, string, string, int) interface{}
 	}
 	// ErrorHandler handler error
 	ErrorHandler func(ctx *gin.Context)
@@ -60,9 +60,8 @@ func (l *Limit) Plugin() bulrush.PNRet {
 				method string
 			}{path: path, method: method})
 			if ruleMatch {
-				rate := Some(rule.Rate, 1).(int16)
-				line := l.Frequency.Model.Find(ip, path, method, rate)
-				if line != nil {
+				item := l.Frequency.Model.Find(ip, path, method, rule.Rate)
+				if item != nil {
 					var errorHandler ErrorHandler
 					if l.Frequency.FailureHandler == nil {
 						errorHandler = DefaultFailureHandler
