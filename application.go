@@ -41,7 +41,7 @@ type (
 )
 
 // Plugin for Limit
-func (l *Limit) Plugin() bulrush.PNRet {
+func (l *Limit) Plugin() interface{} {
 	return func(router *gin.RouterGroup) {
 		router.Use(func(ctx *gin.Context) {
 			path := hashPath(ctx)
