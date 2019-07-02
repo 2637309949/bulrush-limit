@@ -63,3 +63,7 @@ func hashPath(ctx *gin.Context) string {
 	}
 	return path
 }
+
+func test(...interface{}) {
+
+}

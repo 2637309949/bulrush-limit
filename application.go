@@ -7,7 +7,6 @@ package limit
 import (
 	"regexp"
 
-	"github.com/2637309949/bulrush"
 	"github.com/gin-gonic/gin"
 	"github.com/thoas/go-funk"
 )
@@ -35,43 +34,40 @@ type (
 	}
 	// Limit plugin
 	Limit struct {
-		bulrush.PNBase
 		Frequency *Frequency
 	}
 )
 
 // Plugin for Limit
-func (l *Limit) Plugin() interface{} {
-	return func(router *gin.RouterGroup) {
-		router.Use(func(ctx *gin.Context) {
-			path := hashPath(ctx)
-			ip := ctx.ClientIP()
-			method := ctx.Request.Method
-			pass := funk.Find(l.Frequency.Passages, func(regex string) bool {
-				r, _ := regexp.Compile(regex)
-				return r.MatchString(path)
-			})
-			if pass != nil {
-				ctx.Next()
+func (l *Limit) Plugin(router *gin.RouterGroup) {
+	router.Use(func(ctx *gin.Context) {
+		path := hashPath(ctx)
+		ip := ctx.ClientIP()
+		method := ctx.Request.Method
+		pass := funk.Find(l.Frequency.Passages, func(regex string) bool {
+			r, _ := regexp.Compile(regex)
+			return r.MatchString(path)
+		})
+		if pass != nil {
+			ctx.Next()
+			return
+		}
+		ruleMatch, rule := matchRule(l.Frequency.Rules, struct {
+			path   string
+			method string
+		}{path: path, method: method})
+		if ruleMatch {
+			item := l.Frequency.Model.Find(ip, path, method, rule.Rate)
+			if item != nil {
+				var errorHandler ErrorHandler
+				if l.Frequency.FailureHandler == nil {
+					errorHandler = DefaultFailureHandler
+				}
+				errorHandler(ctx)
 				return
 			}
-			ruleMatch, rule := matchRule(l.Frequency.Rules, struct {
-				path   string
-				method string
-			}{path: path, method: method})
-			if ruleMatch {
-				item := l.Frequency.Model.Find(ip, path, method, rule.Rate)
-				if item != nil {
-					var errorHandler ErrorHandler
-					if l.Frequency.FailureHandler == nil {
-						errorHandler = DefaultFailureHandler
-					}
-					errorHandler(ctx)
-					return
-				}
-				l.Frequency.Model.Save(ip, path, method, rule.Rate)
-			}
-			ctx.Next()
-		})
-	}
+			l.Frequency.Model.Save(ip, path, method, rule.Rate)
+		}
+		ctx.Next()
+	})
 }
