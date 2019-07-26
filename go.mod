@@ -3,10 +3,9 @@ module github.com/2637309949/bulrush-limit
 go 1.12
 
 require (
-	github.com/2637309949/bulrush-addition v0.0.0-20190705155020-75d0b41c9574
+	github.com/2637309949/bulrush-addition v0.0.0-20190726090813-d1b08681a36b
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-redis/redis v6.15.2+incompatible
-	github.com/kr/pretty v0.1.0 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/thoas/go-funk v0.4.0
