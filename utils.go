@@ -54,16 +54,3 @@ func matchRule(rules []Rule, params struct {
 	}
 	return true, rule.(Rule)
 }
-
-func hashPath(ctx *gin.Context) string {
-	raw := ctx.Request.URL.RawQuery
-	path := ctx.Request.URL.Path
-	if raw != "" {
-		path = path + "?" + raw
-	}
-	return path
-}
-
-func test(...interface{}) {
-
-}

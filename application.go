@@ -41,24 +41,26 @@ type (
 // Plugin for Limit
 func (l *Limit) Plugin(router *gin.RouterGroup) {
 	router.Use(func(ctx *gin.Context) {
-		path := hashPath(ctx)
+		path := ctx.Request.URL.RequestURI()
 		ip := ctx.ClientIP()
 		method := ctx.Request.Method
-		pass := funk.Find(l.Frequency.Passages, func(regex string) bool {
+		if pass := funk.Find(l.Frequency.Passages, func(regex string) bool {
 			r, _ := regexp.Compile(regex)
 			return r.MatchString(path)
-		})
-		if pass != nil {
+		}); pass != nil {
 			ctx.Next()
 			return
 		}
-		ruleMatch, rule := matchRule(l.Frequency.Rules, struct {
-			path   string
-			method string
-		}{path: path, method: method})
-		if ruleMatch {
-			item := l.Frequency.Model.Find(ip, path, method, rule.Rate)
-			if item != nil {
+		if ruleMatch, rule := matchRule(
+			l.Frequency.Rules,
+			struct {
+				path   string
+				method string
+			}{
+				path:   path,
+				method: method,
+			}); ruleMatch {
+			if item := l.Frequency.Model.Find(ip, path, method, rule.Rate); item != nil {
 				var errorHandler ErrorHandler
 				if l.Frequency.FailureHandler == nil {
 					errorHandler = DefaultFailureHandler
