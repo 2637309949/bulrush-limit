@@ -13,19 +13,10 @@ import (
 	"github.com/thoas/go-funk"
 )
 
-// Some get or a default value
-func Some(t interface{}, i interface{}) interface{} {
-	if t != nil && t != "" && t != 0 {
-		return t
-	}
-	return i
-}
-
 // DefaultFailureHandler default error handler
 var DefaultFailureHandler ErrorHandler = func(ctx *gin.Context) {
-	rushLogger.Warn("rate limited access, pease check again later")
-	ctx.JSON(http.StatusBadRequest, gin.H{"message": "rate limited access, pease check again later"})
-	ctx.Abort()
+	rushLogger.Error("rate limited access, pease check again later")
+	ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "rate limited access, pease check again later"})
 }
 
 func matchRule(rules []Rule, params struct {
