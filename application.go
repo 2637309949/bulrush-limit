@@ -40,6 +40,19 @@ type (
 	}
 )
 
+// New defined new limit
+func New() *Limit {
+	return &Limit{}
+}
+
+// AddOptions defined add option
+func (l *Limit) AddOptions(opts ...Option) *Limit {
+	for _, v := range opts {
+		v.apply(l)
+	}
+	return l
+}
+
 // Plugin for Limit
 func (l *Limit) Plugin(router *gin.RouterGroup) {
 	router.Use(func(ctx *gin.Context) {
