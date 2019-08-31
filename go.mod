@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/2637309949/bulrush-addition v0.0.0-20190813142325-296962f4da29
-	github.com/2637309949/bulrush-utils v0.0.0-20190815130414-1d9237d59ead // indirect
+	github.com/2637309949/bulrush-utils v0.0.0-20190815130414-1d9237d59ead
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/mattn/go-isatty v0.0.9 // indirect

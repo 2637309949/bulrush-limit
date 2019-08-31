@@ -7,6 +7,8 @@ package limit
 import (
 	"regexp"
 
+	utils "github.com/2637309949/bulrush-utils"
+
 	"github.com/gin-gonic/gin"
 	"github.com/thoas/go-funk"
 )
@@ -61,11 +63,7 @@ func (l *Limit) Plugin(router *gin.RouterGroup) {
 				method: method,
 			}); ruleMatch {
 			if item := l.Frequency.Model.Find(ip, path, method, rule.Rate); item != nil {
-				var errorHandler ErrorHandler
-				if l.Frequency.FailureHandler == nil {
-					errorHandler = DefaultFailureHandler
-				}
-				errorHandler(ctx)
+				(utils.Some(l.Frequency.FailureHandler, DefaultFailureHandler).(ErrorHandler))(ctx)
 				return
 			}
 			l.Frequency.Model.Save(ip, path, method, rule.Rate)
